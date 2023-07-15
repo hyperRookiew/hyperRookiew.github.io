@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="en" color-mode="light">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  
+  <meta name="author" content="John Doe" />
+  <meta name="description" content="" />
+  
+  
+  <title>
+    
+      大脑Cahce系列--前端JavaScript系统梳理 
+      
+      
+      |
+    
+     Hexo
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
+  <!-- 代码块风格 -->
+  
+
+  <!-- jquery3.3.1 -->
+  
+    <script defer type="text/javascript" src="/plugins/jquery.min.js"></script>
+  
+
+  <!-- fancybox -->
+  
+    <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
+    <script defer type="text/javascript" src="/plugins/jquery.fancybox.min.js"></script>
+  
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+
+  
+
+  <script>
+    var html = document.documentElement
+    const colorMode = localStorage.getItem('color-mode')
+    if (colorMode) {
+      document.documentElement.setAttribute('color-mode', colorMode)
+    }
+  </script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="/images/avatar.png" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">欢迎来到我的博客!</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">主页</a>
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          <a href="/archives/">归档</a>
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          <a href="/tags/">标签</a>
+        </li>
+      
+        <li class="nav-item" data-path="/friends/">
+          <a href="/friends/">朋友</a>
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          <a href="/about/">关于</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+
+  <!-- LaTex Display -->
+
+  
+    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
+  
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    }
+  </script>
+
+
+
+
+
+  <!-- clipboard -->
+
+  
+    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
+  
+  
+<script src="/js/codeCopy.js"></script>
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">大脑Cahce系列--前端JavaScript系统梳理</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime mr-10" title="Update time"></i>
+          2023-07-15 17:13:23
+        </span>
+        
+              <span class="post-tags">
+                <i class="iconfont icon-tags mr-10" title="Tags"></i>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/%E5%89%8D%E7%AB%AF/" title="前端">
+                    #前端
+                  </a>
+                </span>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/JavaScript/" title="JavaScript">
+                    #JavaScript
+                  </a>
+                </span>
+                
+              </span>
+          
+      </div>
+      <div class="markdown-body">
+        <blockquote>
+<p>背景知识</p>
+<ul>
+<li>本文依然按照以往的风格，更注重JavaScript技术的系统性梳理，不赘述技术细节，因为Google一下就好。</li>
+</ul>
+</blockquote>
+<h3 id="基础"><a href="#基础" class="headerlink" title="基础"></a>基础</h3><h5 id="1-基础知识"><a href="#1-基础知识" class="headerlink" title="1. 基础知识"></a>1. 基础知识</h5><ul>
+<li>JavaScript：ES5&#x2F;6 + DOM + BOM<ul>
+<li>ECMAScript 5 2015（ES6）</li>
+<li>DOM: 针对HTML的编程接口</li>
+<li>BOM：对浏览器进行操作的编程接口</li>
+</ul>
+</li>
+<li>浏览器内核<ul>
+<li>渲染引擎：Blink、Webkit（用于浏览器）</li>
+<li>JS引擎：V8引擎</li>
+</ul>
+</li>
+<li>标识符</li>
+<li>strict mode<ul>
+<li>严格模式：添加“use strict”</li>
+<li>让代码变得更可靠</li>
+<li>使用方式：全局使用，局部使用（在方法中使用）</li>
+<li>推荐编写代码的时候使用严格模式</li>
+</ul>
+</li>
+</ul>
+<span id="more"></span>
+
+<ul>
+<li>语句<ul>
+<li>表达式语句：习惯—最好以分号结尾</li>
+<li>流控制语句：for-in, with</li>
+<li>异常处理语句：</li>
+<li>返回值：</li>
+</ul>
+</li>
+<li>变量<ul>
+<li>局部变量：需要添加var，没有的话会升级为全局变量</li>
+<li>全局变量：</li>
+</ul>
+</li>
+<li>数据类型：<ul>
+<li>5种基础数据类型（undifend、null、Boolean、Number、String），以及Object。只限制这6种形式，不存在其他类型的类型</li>
+<li>typeof运算符：不是函数，返回值为字符串（undefined, boolean, string, number, object, function）</li>
+<li>undefined: 变量被声明但是未初始化</li>
+<li>null: 空对象指针。当我们声明一个变量是为了保存一个对象时，但是没法立即给他初始化时候，最好把它设置为null，这样就知道未来这个变量是变量。</li>
+<li>Number与String数据类型转换</li>
+<li>Object类型：创建</li>
+</ul>
+</li>
+<li>运算符<ul>
+<li>JS种的奇技淫巧都来自于对运算符的使用</li>
+<li>基础的运算符，和其他语言一样</li>
+<li>布尔运算（!!取bool值,&amp;&amp;短路操作,||默认值）</li>
+<li>相等运算符：相等（&#x3D;&#x3D;，!&#x3D;）,全等（&#x3D;&#x3D;&#x3D;，!&#x3D;&#x3D;）,他们的不同。</li>
+<li>条件运算符</li>
+</ul>
+</li>
+<li>函数<ul>
+<li>function 声明</li>
+<li>参数：arguments，参数都是值传递的（copy简单值，copy对象和函数指针），其实就是局部变量</li>
+<li>没有函数重载，（不过可以通过模拟函数实现：通过对arguments进行解析判断）</li>
+</ul>
+</li>
+</ul>
+<h5 id="2-引用类型"><a href="#2-引用类型" class="headerlink" title="2.引用类型"></a>2.引用类型</h5><ul>
+<li>Object</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#125; 等价于 new Object()</span><br><span class="line">a.b 等价于 a[b]</span><br></pre></td></tr></table></figure>
+<ul>
+<li>Array</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[] 等价于 new Array()</span><br><span class="line">array.length</span><br></pre></td></tr></table></figure>
+<ul>
+<li>判断是否是Array的两种方法：instanceof，isArray</li>
+<li>typeof VS instanceof</li>
+<li>Date：+ new Date() 得到时间戳</li>
+<li>RegExp: 正则表达式</li>
+<li>Function</li>
+<li>单例内置对象<ul>
+<li>window</li>
+<li>Math</li>
+</ul>
+</li>
+</ul>
+<h5 id="3-作用域"><a href="#3-作用域" class="headerlink" title="3. 作用域"></a>3. 作用域</h5><ul>
+<li>作用域链<ul>
+<li>从外向内部的链条，内部可以访问外部，外部无法访问内部。内部没查找到，则向上外层继续查找</li>
+</ul>
+</li>
+<li>this作用域：永远指向最后调用它的对象，具有一定的作用域。</li>
+<li>bind():可以为函数调用绑定一个作用域（实际是一个对象）</li>
+<li>没有块级作用域！！！，花括号无法延长作用域，只可以通过函数的方式来增加作用域</li>
+<li>闭包：有权访问另一个函数作用域中的变量的函数</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">applyArr</span>(<span class="params"></span>)&#123;</span><br><span class="line">  <span class="keyword">var</span> arr = [];</span><br><span class="line">  <span class="keyword">for</span>(<span class="keyword">var</span> i=<span class="number">0</span>; i &lt; <span class="number">10</span>; i++)&#123;  <span class="comment">// 不存在块作用域，不会新增作用域</span></span><br><span class="line">    <span class="comment">// 不使用闭包</span></span><br><span class="line">    arr.<span class="title function_">push</span>(<span class="keyword">function</span>(<span class="params"></span>)&#123;  <span class="comment">//使用的i是applyArr的作用域，</span></span><br><span class="line">      <span class="keyword">return</span> i;           <span class="comment">// 最终在外部执行的时候，i取值一直都是10</span></span><br><span class="line">    &#125;)</span><br><span class="line">    <span class="comment">// 使用闭包</span></span><br><span class="line">    (<span class="keyword">function</span>(<span class="params">index</span>)&#123;     <span class="comment">// 通过函数构造一个新的作用域,并将i作为参数传入</span></span><br><span class="line">      arr.<span class="title function_">push</span>(<span class="keyword">function</span>(<span class="params"></span>)&#123;</span><br><span class="line">        <span class="keyword">return</span> index;     <span class="comment">// 这样return返回的时候，取得是新创建作用域中的值</span></span><br><span class="line">      &#125;)</span><br><span class="line">    &#125;)(i);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> arr;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> arr = <span class="title function_">applyArr</span>();</span><br><span class="line"><span class="keyword">var</span> b = arr[<span class="number">1</span>]();</span><br><span class="line"><span class="comment">// 如果不使用闭包，那么b最终的值为10</span></span><br><span class="line"><span class="comment">// 使用闭包后，b的值为1</span></span><br></pre></td></tr></table></figure>
+<h5 id="4-面向对象的JavaScript"><a href="#4-面向对象的JavaScript" class="headerlink" title="4. 面向对象的JavaScript"></a>4. 面向对象的JavaScript</h5><ul>
+<li>对象属性<ul>
+<li>一般方法：直接赋值新增属性</li>
+<li>数据属性：Object.defineProperty(obj,”name”,{configurable,enumerable,writable,value});</li>
+<li>访问器属性：get，set</li>
+</ul>
+</li>
+<li>创建对象<ul>
+<li>工厂模式</li>
+<li>构造函数模式</li>
+<li>原型模式：prototype</li>
+<li>构造函数与原型组合构造：属性放在构造函数中，方法放在原型中</li>
+</ul>
+</li>
+<li>实例属性和原型属性<ul>
+<li>in：“name” in obj， 用来判断实例obj是否有name属性</li>
+<li>obj.hasOwnProperty(“name”): 用来判断在实例化之后的对象上，目标的属性是否是实例属性or实例方法。</li>
+</ul>
+</li>
+<li>对象继承<ul>
+<li>基于原型链的继承：缺点，属性也被继承了，继承的属性在子类中是原型属性</li>
+<li>基于构造函数的继承：父类方法在子类中拷贝，资源浪费。</li>
+<li>组合继承：</li>
+</ul>
+</li>
+</ul>
+<h5 id="5-DOM编程"><a href="#5-DOM编程" class="headerlink" title="5. DOM编程"></a>5. DOM编程</h5><ul>
+<li>DOM节点<ul>
+<li>节点间的关系：父子，兄弟</li>
+<li>节点特征：nodeType,nodeName,nodeValue,parentNode…</li>
+</ul>
+</li>
+<li>document节点的属性<ul>
+<li>document.title：页面标题</li>
+<li>document.referrer：来自于那个页面，用于安全性判断，防盗链</li>
+<li>document.domain：解决域不同的问题</li>
+</ul>
+</li>
+<li>DOM元素节点的默认属性<ul>
+<li>.id</li>
+<li>.className</li>
+<li>.title</li>
+<li>.lang：文本</li>
+<li>.dir</li>
+<li>.getAttribute(‘id’)</li>
+</ul>
+</li>
+<li>DOM操作<ul>
+<li>创建：document.createElement(“div”);</li>
+<li>添加：someNode.appendChild(newNode);</li>
+<li>插入：someNode.insertBefore(newNode,beforeChildNode);</li>
+<li>替换：someNode.replaceChild(newNode,firstChild)</li>
+<li>删除：someNode.remove(someNode.firstNode);</li>
+<li>查找：document.getElementById(‘id’); document.getElementsByTagName()</li>
+</ul>
+</li>
+</ul>
+<h5 id="6-事件"><a href="#6-事件" class="headerlink" title="6. 事件"></a>6. 事件</h5><ul>
+<li>事件流<ul>
+<li>用来判断页面的哪一个部分会拥有某个特定的事件，即事件的定位</li>
+<li>事件流：冒泡<ul>
+<li>逐级向上级传递，接收和处理</li>
+</ul>
+</li>
+<li>事件流：捕获<ul>
+<li>从顶层节点向下传递，接收和处理</li>
+</ul>
+</li>
+<li>DOM事件流：组合了冒泡<ul>
+<li>先是捕获阶段，然后冒泡阶段，每个几点有两次处理事件的机会。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>事件处理<ul>
+<li>HTML标签中：比如onclick</li>
+<li>DOM0事件处理：domElement.onclick &#x3D; function…</li>
+<li>DOM2事件处理：element.addEventListener(“click”,function()…, true&#x2F;false),第三个参数指明是在捕获阶段true还是冒泡阶段处理事件。先绑定的事件先处理。</li>
+</ul>
+</li>
+<li>事件处理跨浏览器<ul>
+<li>封装跨浏览器的事件处理方法，比如安卓控制网页中的事件。</li>
+</ul>
+</li>
+<li>event属性方法<ul>
+<li>e.stopPropagation()：阻止事件冒泡</li>
+<li>e.preventDefault(); 阻止一些默认事件</li>
+</ul>
+</li>
+<li>事件类型<ul>
+<li>各种事件，用的时候查</li>
+<li>PC事件和移动端事件</li>
+</ul>
+</li>
+</ul>
+<h5 id="7-JSON数据通信"><a href="#7-JSON数据通信" class="headerlink" title="7. JSON数据通信"></a>7. JSON数据通信</h5><ul>
+<li><p>JSON</p>
+<ul>
+<li>JSON是一种数据格式，和XML是编程语言</li>
+<li>JSON更高效</li>
+<li>JSON无法表示undifend类型</li>
+<li>JSON字符串是双引号</li>
+<li>JSON中的对象的属性也必须是字符串</li>
+<li>JSON.stringify(obj)：将js对象序列化成json字符串</li>
+<li>JSON.parse(jsonText,function(key,value))：解析JSON，第二个参数为解析函数</li>
+</ul>
+</li>
+<li><p>AJAX</p>
+<ul>
+<li>异步加载</li>
+<li>无需前端界面刷新</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> xhr = <span class="keyword">new</span> <span class="title class_">XMLHttpRequest</span>();</span><br><span class="line">xhr.<span class="title function_">open</span>(<span class="string">&quot;get&quot;</span>,<span class="string">&quot;url&quot;</span>,<span class="literal">false</span>); <span class="comment">// 请求是否异步【异步：请求期间可以执行后续js，同步：不允许请求期间执行后续js】</span></span><br><span class="line">xhr.<span class="title function_">send</span>(<span class="string">&quot;&quot;</span>);</span><br><span class="line"><span class="comment">// 同步的话</span></span><br><span class="line">xhr.<span class="property">status</span></span><br><span class="line">xhr.<span class="property">responseText</span></span><br><span class="line"><span class="comment">// 异步的话</span></span><br><span class="line">xhr.<span class="property">onreadystatechange</span> = <span class="keyword">function</span>(<span class="params"></span>)&#123;  <span class="comment">//在执行的过程中会不断执行onreadystatechange</span></span><br><span class="line">  <span class="keyword">if</span>(xhr.<span class="property">readyState</span> === <span class="number">4</span>)&#123; <span class="comment">//0.未初始化，1.启动，2.发送，3.接收，4.完成</span></span><br><span class="line">    xhr.<span class="property">status</span></span><br><span class="line">    xhr.<span class="property">responseText</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="三、ES6"><a href="#三、ES6" class="headerlink" title="三、ES6"></a>三、ES6</h3><h5 id="1-历史"><a href="#1-历史" class="headerlink" title="1. 历史"></a>1. 历史</h5><ul>
+<li>ES发展<ul>
+<li>ES5</li>
+<li>ES6 &#x3D; ES2015</li>
+<li>ES2015… 一年一更</li>
+</ul>
+</li>
+<li>Evergreen浏览器<ul>
+<li>IE，chrome，firefox，opera…</li>
+</ul>
+</li>
+<li>环境<ul>
+<li>Node：执行环境</li>
+<li>NPM： 依赖以及包管理工具</li>
+<li>Babel：ECMASCRIPT的转译器，将先进的标准转化为已经支持的标准</li>
+</ul>
+</li>
+<li>如何支持新标准<ul>
+<li>原生支持：开发者查看浏览器的支持情况</li>
+<li>Polyfill：以贴近新标准的方式封装API的效果</li>
+<li>转译器：babel</li>
+</ul>
+</li>
+</ul>
+<h5 id="2-ES6的模块"><a href="#2-ES6的模块" class="headerlink" title="2. ES6的模块"></a>2. ES6的模块</h5><ul>
+<li>模块<ul>
+<li>易于拆分，模块加载</li>
+<li>模块化</li>
+</ul>
+</li>
+<li>模块加载规范<ul>
+<li>UMD <ul>
+<li>CommonJS</li>
+<li>AMD</li>
+</ul>
+</li>
+<li>CMD</li>
+</ul>
+</li>
+<li>ES6中的模块加载</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// module1.js</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="keyword">function</span> <span class="title function_">methodA</span>(<span class="params"></span>)&#123;&#125;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="keyword">function</span> <span class="title function_">methodB</span>(<span class="params"></span>)&#123;&#125;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="keyword">function</span> <span class="title function_">methodC</span>(<span class="params"></span>)&#123;&#125;</span><br><span class="line"><span class="comment">// module2.js</span></span><br><span class="line"><span class="keyword">import</span> &#123; methodA &#125;<span class="keyword">from</span> <span class="string">&#x27;./module1.js&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>打包工具<ul>
+<li>browserify、webpack等：</li>
+<li>将多个js模块进行整体打包成一个js文件</li>
+<li>在打包之前需要先使用babel将ES6转化为ES5</li>
+</ul>
+</li>
+</ul>
+<h5 id="3-ES6的Class"><a href="#3-ES6的Class" class="headerlink" title="3. ES6的Class"></a>3. ES6的Class</h5><ul>
+<li>不需要像ES5那样用原型取声明各种方法</li>
+<li>class的typeof值其实也为function</li>
+<li>class内部声明的是实例属性</li>
+<li>ES6实际上是提供了一些语法糖</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">ClassName</span> &#123;</span><br><span class="line">  <span class="title function_">constructor</span>(<span class="params"></span>)&#123;&#125;</span><br><span class="line">  <span class="title function_">getName</span>(<span class="params"></span>)&#123;</span><br><span class="line">    <span class="keyword">return</span> name;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> hh = <span class="keyword">new</span> <span class="title class_">ClassName</span>();</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>继承<ul>
+<li>ES5特别麻烦，ES6就一个extends就可以了</li>
+</ul>
+</li>
+</ul>
+<h5 id="4-ES6常用特性"><a href="#4-ES6常用特性" class="headerlink" title="4. ES6常用特性"></a>4. ES6常用特性</h5><ul>
+<li>解构赋值</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 从data</span></span><br><span class="line"><span class="keyword">const</span> &#123;id = <span class="number">1</span>&#125; = data;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>展开操作符</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//数组展开</span></span><br><span class="line">[<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,...x]</span><br><span class="line"><span class="comment">//属性展开</span></span><br><span class="line">&#123;<span class="attr">a</span>:<span class="number">3</span>,<span class="attr">b</span>:<span class="number">4</span>,...c&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>取余</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[a,b,...rest] = [1,2,3,4,5,6]</span><br><span class="line">// a = 1</span><br><span class="line">// b = 2</span><br><span class="line">// rest = [3,4,5,6]</span><br></pre></td></tr></table></figure>
+<ul>
+<li>模板</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">`my name is <span class="subst">$&#123;name&#125;</span>`</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>Set 和 Map</li>
+<li>类似ES5中的数组和对象</li>
+<li>但是不允许出现元素的重复</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> set = <span class="keyword">new</span> <span class="title class_">Set</span>([<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">4</span>]);</span><br><span class="line">set.<span class="title function_">add</span>(<span class="number">5</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> map = <span class="keyword">new</span> <span class="title class_">Map</span>([</span><br><span class="line">  [<span class="string">&#x27;a&#x27;</span>,<span class="number">1</span>],</span><br><span class="line">  [<span class="string">&#x27;b&#x27;</span>,<span class="number">2</span>]]);</span><br><span class="line">map.<span class="title function_">put</span>(<span class="string">&#x27;c&#x27;</span>,<span class="number">3</span>);</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>Generator函数和Iterator函数<ul>
+<li>Generator用来实现状态机</li>
+<li>Iterator用来实现迭代和遍历</li>
+</ul>
+</li>
+</ul>
+<h5 id="5-ES6的异步编程"><a href="#5-ES6的异步编程" class="headerlink" title="5.ES6的异步编程"></a>5.ES6的异步编程</h5><ul>
+<li><p>回调函数&#x2F;事件</p>
+<ul>
+<li>遇到多种回调嵌套的时候写起来会很不友好</li>
+</ul>
+</li>
+<li><p>Promise</p>
+<ul>
+<li>是异步编程的一种解决方案，比传统的基于回调函数和事件的方式更合理和强大</li>
+<li>Promise对象代表一个异步操作，有三种状态<ul>
+<li>Pending：进行中</li>
+<li>Resolved：已完成</li>
+<li>Rejected：已失效</li>
+</ul>
+</li>
+<li>Promise.then()<ul>
+<li>可以接受两个回调函数为参数: then（（resolved, rejected）&#x3D;&gt;{}）</li>
+<li>then的返回值可以还是一个Promise对象，即仍是一个异步操作。<ul>
+<li>可以采用链式写法，即then方法后再调用另一个then</li>
+<li>后续的回调函数会等到该Promise对象处理完成之后才会被调用</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 第一个异步操作</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">p1</span> (value)&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Promise</span>(<span class="function">(<span class="params">resolve,reject</span>)=&gt;</span>&#123;</span><br><span class="line">    <span class="title function_">someoperation</span>(value,...)=&gt;&#123;</span><br><span class="line">      <span class="keyword">if</span>(...)&#123;</span><br><span class="line">        <span class="title function_">reject</span>();</span><br><span class="line">      &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="title function_">resolve</span>(value)</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;)</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//第二个异步操作</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">p2</span> (value)&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Promise</span>(<span class="function">(<span class="params">resolve,reject</span>)=&gt;</span>&#123;</span><br><span class="line">    <span class="title function_">someoperation</span>(value,...)=&gt;&#123;</span><br><span class="line">      <span class="keyword">if</span>(...)&#123;</span><br><span class="line">        <span class="title function_">reject</span>();</span><br><span class="line">      &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="title function_">resolve</span>(value)</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;)</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 按照先1-&gt;2-&gt;1的顺序执行</span></span><br><span class="line"><span class="title function_">p1</span>(<span class="number">10</span>)</span><br><span class="line">.<span class="title function_">then</span>(<span class="function"><span class="params">value</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="title function_">p2</span>(value)</span><br><span class="line">&#125;, <span class="function"><span class="params">rej</span> =&gt;</span> &#123;&#125;)</span><br><span class="line">.<span class="title function_">then</span>(<span class="function"><span class="params">value</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="title function_">p1</span>(value)</span><br><span class="line">&#125;, <span class="function"><span class="params">rej</span> =&gt;</span> &#123;&#125;);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>asyncy异步编程</p>
+</li>
+</ul>
+<h3 id="未完待续"><a href="#未完待续" class="headerlink" title="未完待续"></a>未完待续</h3>
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/2021/10/10/CSS%E6%8A%80%E6%9C%AF%E7%B3%BB%E7%BB%9F%E6%A2%B3%E7%90%86/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>Prev</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime mr-10" title="Update time"></i>
+              2023-07-15 17:13:23
+            </span>
+            
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags mr-10" title="Tags"></i>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/%E5%89%8D%E7%AB%AF/" title="前端">
+                        #前端
+                      </a>
+                    </span>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/JavaScript/" title="JavaScript">
+                        #JavaScript
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+              <a href="/2021/10/26/React%E5%89%8D%E7%AB%AF%E9%A1%B9%E7%9B%AE%E7%9A%84Docker%E5%8C%96/" target="_self">
+                <span>Next</span>
+                <i class="iconfont icon-chevronright"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+    </div>
+    
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">Contents</div>
+    <div class="catalog-content">
+      
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E7%A1%80"><span class="toc-text">基础</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86"><span class="toc-text">1. 基础知识</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2-%E5%BC%95%E7%94%A8%E7%B1%BB%E5%9E%8B"><span class="toc-text">2.引用类型</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3-%E4%BD%9C%E7%94%A8%E5%9F%9F"><span class="toc-text">3. 作用域</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#4-%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E7%9A%84JavaScript"><span class="toc-text">4. 面向对象的JavaScript</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#5-DOM%E7%BC%96%E7%A8%8B"><span class="toc-text">5. DOM编程</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#6-%E4%BA%8B%E4%BB%B6"><span class="toc-text">6. 事件</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#7-JSON%E6%95%B0%E6%8D%AE%E9%80%9A%E4%BF%A1"><span class="toc-text">7. JSON数据通信</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89%E3%80%81ES6"><span class="toc-text">三、ES6</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1-%E5%8E%86%E5%8F%B2"><span class="toc-text">1. 历史</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2-ES6%E7%9A%84%E6%A8%A1%E5%9D%97"><span class="toc-text">2. ES6的模块</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3-ES6%E7%9A%84Class"><span class="toc-text">3. ES6的Class</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#4-ES6%E5%B8%B8%E7%94%A8%E7%89%B9%E6%80%A7"><span class="toc-text">4. ES6常用特性</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#5-ES6%E7%9A%84%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B"><span class="toc-text">5.ES6的异步编程</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%AA%E5%AE%8C%E5%BE%85%E7%BB%AD"><span class="toc-text">未完待续</span></a></li></ol>
+      
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
+    
+      <div class="comments-container">
+        
+
+
+
+
+  
+    <script async type="text/javascript" src="/plugins/valine.min.js" onload="loadValineSuc(this)"></script>
+  
+
+  <div id="vcomments"></div>
+
+  <script>
+    function loadValineSuc() {
+      new Valine({
+        el: '#vcomments',
+        appId: 'oOhVZyeGYClJeXi7hL6mMis8-gzGzoHsz',
+        appKey: 'T2sc39tWFmhYbQiem6rTdkkc',
+        placeholder: 'Welcome!',
+        avatar: 'retro',
+        lang: 'en'
+      })
+    }
+  </script>
+
+    <style>
+      .comments-container .v .vempty {
+        display: none!important;
+      }
+    </style>
+
+
+
+
+      </div>
+    
+  </div>
+
+
+        
+<div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          <a title="github" target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">
+            <i class="iconfont icon-github"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Copyright © 2023 Oranges</a>
+        
+    </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Theme by Oranges | Powered by Hexo</a>
+        
+    </div>
+  
+  
+</div>
+
+      </div>
+
+      <div class="tools-bar">
+        <div class="back-to-top tools-bar-item hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+        
+  <div class="search-icon tools-bar-item" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="搜索...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>First search, index file loading, please wait...<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>No result<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>The search.xml file was not found, please refer to：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>The request failed, Try to refresh the page or try again later.<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+        
+  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
+    <a href="javascript: void(0)">
+      <i id="theme-icon" class="iconfont icon-moon"></i>
+    </a>
+  </div>
+
+  
+<script src="/js/colorscheme.js"></script>
+
+
+
+
+
+        
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + %E5%A4%A7%E8%84%91Cahce%E7%B3%BB%E5%88%97--%E5%89%8D%E7%AB%AFJavaScript%E7%B3%BB%E7%BB%9F%E6%A2%B3%E7%90%86 + '&url=' + http%3A%2F%2Fexample.com%2F2021%2F10%2F14%2F%25E5%2589%258D%25E7%25AB%25AFJavaScript%25E7%25B3%25BB%25E7%25BB%259F%25E6%25A2%25B3%25E7%2590%2586%2F + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=http://example.com/2021/10/14/%E5%89%8D%E7%AB%AFJavaScript%E7%B3%BB%E7%BB%9F%E6%A2%B3%E7%90%86/" target="_blank" title="Facebook">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        
+      </div>
+    </div>
+  
+  
+<script src="/js/shares.js"></script>
+
+
+
+      </div>
+    </div>
+  </body>
+</html>

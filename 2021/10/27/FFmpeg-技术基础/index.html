@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en" color-mode="light">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  
+  <meta name="author" content="John Doe" />
+  <meta name="description" content="" />
+  
+  
+  <title>
+    
+      FFmpeg 技术基础 
+      
+      
+      |
+    
+     Hexo
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
+  <!-- 代码块风格 -->
+  
+
+  <!-- jquery3.3.1 -->
+  
+    <script defer type="text/javascript" src="/plugins/jquery.min.js"></script>
+  
+
+  <!-- fancybox -->
+  
+    <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
+    <script defer type="text/javascript" src="/plugins/jquery.fancybox.min.js"></script>
+  
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+
+  
+
+  <script>
+    var html = document.documentElement
+    const colorMode = localStorage.getItem('color-mode')
+    if (colorMode) {
+      document.documentElement.setAttribute('color-mode', colorMode)
+    }
+  </script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="/images/avatar.png" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">欢迎来到我的博客!</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">主页</a>
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          <a href="/archives/">归档</a>
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          <a href="/tags/">标签</a>
+        </li>
+      
+        <li class="nav-item" data-path="/friends/">
+          <a href="/friends/">朋友</a>
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          <a href="/about/">关于</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+
+  <!-- LaTex Display -->
+
+  
+    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
+  
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    }
+  </script>
+
+
+
+
+
+  <!-- clipboard -->
+
+  
+    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
+  
+  
+<script src="/js/codeCopy.js"></script>
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">FFmpeg 技术基础</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime mr-10" title="Update time"></i>
+          2023-07-15 17:13:23
+        </span>
+        
+              <span class="post-tags">
+                <i class="iconfont icon-tags mr-10" title="Tags"></i>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/" title="音视频">
+                    #音视频
+                  </a>
+                </span>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/FFmpeg/" title="FFmpeg">
+                    #FFmpeg
+                  </a>
+                </span>
+                
+              </span>
+          
+      </div>
+      <div class="markdown-body">
+        <h3 id="番外"><a href="#番外" class="headerlink" title="番外"></a>番外</h3><p>格式工厂居然被FFmpeg拉黑名单了，因为没有遵守开源协议，转身就把它卸载了。</p>
+<h3 id="一、FFmpeg基础"><a href="#一、FFmpeg基础" class="headerlink" title="一、FFmpeg基础"></a>一、FFmpeg基础</h3><h5 id="1-FFmpeg处理音视频的流程"><a href="#1-FFmpeg处理音视频的流程" class="headerlink" title="1. FFmpeg处理音视频的流程"></a>1. FFmpeg处理音视频的流程</h5><ul>
+<li>解复用(demuxer)：带封装格式的输入文件-&gt;编码数据包（音频，视频，字幕等）</li>
+<li>解码(decoder)：编码数据包-&gt;解码后的数据帧</li>
+<li>处理（processer）：对数据帧进行处理，比如转码、转分辨率、转帧率、加滤镜等</li>
+<li>编码（encoder）：解码数据帧-&gt;编码数据包</li>
+<li>复用（muxer）：编码数据包-&gt;输出带封装格式的文件</li>
+<li>注意：<ul>
+<li>对于转封装这样的操作，不需要进行处理操作，所以不需要进行解码和编码操作，demuxer之后直接muxer就可以。</li>
+</ul>
+</li>
+</ul>
+<span id="more"></span>
+
+<h3 id="常用FFmpeg命令"><a href="#常用FFmpeg命令" class="headerlink" title="常用FFmpeg命令"></a>常用FFmpeg命令</h3><h5 id="1-基本信息查询类"><a href="#1-基本信息查询类" class="headerlink" title="1. 基本信息查询类"></a>1. 基本信息查询类</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">-version</span><br><span class="line">-devices:显示可用设备</span><br><span class="line">-formats：支持的文件</span><br><span class="line">-muxer -demuxer：支持的封装和解封装</span><br><span class="line">-codecs -decoders：编解码器</span><br><span class="line">-filters：支持的所有过滤器</span><br></pre></td></tr></table></figure>
+
+<h5 id="2-FFmpeg录制命令"><a href="#2-FFmpeg录制命令" class="headerlink" title="2. FFmpeg录制命令"></a>2. FFmpeg录制命令</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">// MAC 平台录制视频</span><br><span class="line">ffmpeg -f avfoundation -i 1 -r 30 out.yuv</span><br><span class="line">// 参数用法</span><br><span class="line">-f // 格式，采用mac提供的avfoundation库来采集视频</span><br><span class="line">-i // 指定从哪里采集数据，1为屏幕设备的索引值，屏幕为1，摄像头为0</span><br><span class="line">-r // 指定帧率，这里为30帧</span><br><span class="line">// 播放录制的视频</span><br><span class="line">ffplay -video_size 2560x1600 -pix_fmt yuv420p out.yuv</span><br><span class="line">// 录制声音</span><br><span class="line">ffmpeg -f avfoundation -i :1 out.wav</span><br><span class="line">// 播放录制的声音</span><br><span class="line">ffplay out.wav</span><br></pre></td></tr></table></figure>
+<h5 id="3-FFmpeg-分解与复用处理（媒体格式转换）"><a href="#3-FFmpeg-分解与复用处理（媒体格式转换）" class="headerlink" title="3. FFmpeg 分解与复用处理（媒体格式转换）"></a>3. FFmpeg 分解与复用处理（媒体格式转换）</h5><ul>
+<li>一般的封装格式转换转换，比如.mp4转.flv</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">// mp4转flv,这个的处理速度会非常的快</span><br><span class="line">ffmpeg -i input.mp4 -vcodec copy -acodec copy out.flv</span><br><span class="line">//参数介绍</span><br><span class="line">-vcodec copy // 视频编解码直接拷贝，不做更改</span><br><span class="line">-acodec copy // 音频编解码也不做更改</span><br></pre></td></tr></table></figure>
+<ul>
+<li>从视频中仅抽取视频或者音频</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">// 抽取已有视频流和音频流</span><br><span class="line">ffmpeg -i input.mp4 -an -vcodec copy out.h254</span><br><span class="line">ffmpeg -i input.mp4 -vn -acodec copy out.aac // 格式需要和视频中音频流的格式相同</span><br><span class="line">// 参数介绍</span><br><span class="line">-an: audio no,不要音频</span><br><span class="line">-vn: video no,不要视频</span><br></pre></td></tr></table></figure>
+
+<h5 id="4-FFmpeg处理原始数据命令"><a href="#4-FFmpeg处理原始数据命令" class="headerlink" title="4. FFmpeg处理原始数据命令"></a>4. FFmpeg处理原始数据命令</h5><ul>
+<li>原始数据<ul>
+<li>视频原始数据：YUV数据</li>
+<li>音频原视数据：PCM数据</li>
+</ul>
+</li>
+<li>原始数据的提取是之后对音视频进行进一步处理的基础</li>
+<li>提取YUV数据<ul>
+<li>这个过程会有些长，因为涉及到编解码了</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">// 提取YUV数据</span><br><span class="line">ffmpeg -i input.mp4 -an -c:v rawvideo -pix_fmt yuv420p out.yuv</span><br><span class="line">// 参数意义</span><br><span class="line">-c:v rawvideo     // 指定视频的编码器，选择rawvideo编解码器，得到YUV</span><br><span class="line">-pix_fmt yuv420p  // 指定像素格式，这里一般指定为yuv420p （YUV4：2：0格式）</span><br><span class="line">// 播放YUV数据</span><br><span class="line">ffplay -video_size 2560x1600 -pix_fmt yuv420p out.yuv</span><br></pre></td></tr></table></figure>
+<ul>
+<li>提取PCM音频原视数据</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">// 提取PCM</span><br><span class="line">ffmpeg -i input.mp4 -vn -ar 44100 -ac 2 -f s16le out.pcm</span><br><span class="line">// 参数意义</span><br><span class="line">-ar 44100   // 设置音频采样率，常用的采样率，44.1kHZ，48kHZ，32kHZ，16kHZ</span><br><span class="line">-ac 2       // 设置声道</span><br><span class="line">-f s16le    // 指定pcm数据的存储格式</span><br><span class="line">// 播放PCM</span><br><span class="line">ffplay -ar 44100 -ac 2 -f s16le out.pcm </span><br></pre></td></tr></table></figure>
+<h5 id="5-FFmpeg滤镜命令"><a href="#5-FFmpeg滤镜命令" class="headerlink" title="5. FFmpeg滤镜命令"></a>5. FFmpeg滤镜命令</h5><ul>
+<li>基于avfilter组件，多用于多媒体的处理与编辑</li>
+<li>可以实现加水印，去水印，画中画，裁剪，倍速播放</li>
+<li>滤镜的工作原理<ul>
+<li>对解码后的数据帧再进行过滤（处理）</li>
+<li>对过滤后的帧再进行编码</li>
+</ul>
+</li>
+<li>视频裁剪命令</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i input.mp4 -vf crop=in_w-200:in_h-200 -c:v libx264 -c:a copy out</span><br><span class="line">// 参数使用</span><br><span class="line">-vf crop=in_w-200:in_h-200  // 指定滤镜名字为裁剪，之后为该滤镜的参数，宽高为200</span><br><span class="line">-c:v libx264                // 指定视频处理的编码器</span><br><span class="line">-c:a copy                   // 音频不做处理</span><br></pre></td></tr></table></figure>
+<ul>
+<li>视频加水印命令</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">// movie滤镜，添加水印</span><br><span class="line">ffmpeg -i input.flv -preset veryslow -c:v libx264 -c:a copy -vf &quot;movie=pic.png[wm];[in][wm] overlay=100:100[out]&quot; overlay.flv</span><br><span class="line">// 参数使用</span><br><span class="line">-preset veryslow  // 慢模式，最终视频质量损失较低</span><br></pre></td></tr></table></figure>
+
+<h5 id="6-FFmpeg裁剪与合并命令"><a href="#6-FFmpeg裁剪与合并命令" class="headerlink" title="6. FFmpeg裁剪与合并命令"></a>6. FFmpeg裁剪与合并命令</h5><ul>
+<li>视频裁剪命令</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">// 基于开始时间和时长进行裁剪</span><br><span class="line">ffmpeg -i input.flv -ss 00:00:00 -t 10 out.ts</span><br><span class="line">// 参数使用</span><br><span class="line">-ss 00:00:00  // 指定开始裁剪的时间，时：分：秒</span><br><span class="line">-t  10        // 裁剪的时长，以秒为单位</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>视频拼接命令</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">// 视频拼接命令</span><br><span class="line">ffmpeg -f concat -i input.txt out.flv</span><br><span class="line">// 参数</span><br><span class="line">-f concat       // 指定为拼接</span><br><span class="line">-i inputs.txt   //指定视频列表的文件</span><br><span class="line">// input.txt文件内容</span><br><span class="line">file &#x27;1.ts&#x27;</span><br><span class="line">file &#x27;2.ts&#x27;</span><br></pre></td></tr></table></figure>
+
+<h5 id="7-图片-视频互转"><a href="#7-图片-视频互转" class="headerlink" title="7. 图片&#x2F;视频互转"></a>7. 图片&#x2F;视频互转</h5><ul>
+<li>视频转图片</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">// 视频转多张图片序列</span><br><span class="line">ffmpeg -i input.flv -r 1 -f image2 image-%3d.jpeg</span><br><span class="line">// 参数使用</span><br><span class="line">-r 1    // 指定转换图片的频率，每秒转出一张</span><br><span class="line">-f image2 //  指定图片的输出格式</span><br><span class="line">image-%3d.jepg  // 文件名以image-加三个动态数字</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>多张图片序列转视频</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// 图片转视频</span><br><span class="line">ffmpeg -i image-%3d.jpeg -r 1 out.mp4</span><br></pre></td></tr></table></figure>
+
+<h5 id="8-直播相关的命令"><a href="#8-直播相关的命令" class="headerlink" title="8. 直播相关的命令"></a>8. 直播相关的命令</h5><ul>
+<li>直播推流</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -re -i input.mp4 -c copy -f flv rtmp://ip:1935/live/stream_name</span><br><span class="line">//参数</span><br><span class="line">-re   // 减慢推流帧率速度, 如果不加的话，ffmpeg会把所有数据一股脑的把所有的数据推出去。本来一个2分钟的视频 他可能几秒钟就推完了</span><br><span class="line">-f flv 需要指定输出的格式为rtmp</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i rtmp://ip:1935/live/stream_name -c copy video.flv</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>内容</p>
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/2021/10/26/React%E5%89%8D%E7%AB%AF%E9%A1%B9%E7%9B%AE%E7%9A%84Docker%E5%8C%96/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>Prev</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime mr-10" title="Update time"></i>
+              2023-07-15 17:13:23
+            </span>
+            
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags mr-10" title="Tags"></i>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/" title="音视频">
+                        #音视频
+                      </a>
+                    </span>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/FFmpeg/" title="FFmpeg">
+                        #FFmpeg
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+              <a href="/2021/10/30/vim-%E7%BC%96%E8%BE%91%E5%99%A8/" target="_self">
+                <span>Next</span>
+                <i class="iconfont icon-chevronright"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+    </div>
+    
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">Contents</div>
+    <div class="catalog-content">
+      
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%95%AA%E5%A4%96"><span class="toc-text">番外</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E3%80%81FFmpeg%E5%9F%BA%E7%A1%80"><span class="toc-text">一、FFmpeg基础</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1-FFmpeg%E5%A4%84%E7%90%86%E9%9F%B3%E8%A7%86%E9%A2%91%E7%9A%84%E6%B5%81%E7%A8%8B"><span class="toc-text">1. FFmpeg处理音视频的流程</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8FFmpeg%E5%91%BD%E4%BB%A4"><span class="toc-text">常用FFmpeg命令</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1-%E5%9F%BA%E6%9C%AC%E4%BF%A1%E6%81%AF%E6%9F%A5%E8%AF%A2%E7%B1%BB"><span class="toc-text">1. 基本信息查询类</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2-FFmpeg%E5%BD%95%E5%88%B6%E5%91%BD%E4%BB%A4"><span class="toc-text">2. FFmpeg录制命令</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3-FFmpeg-%E5%88%86%E8%A7%A3%E4%B8%8E%E5%A4%8D%E7%94%A8%E5%A4%84%E7%90%86%EF%BC%88%E5%AA%92%E4%BD%93%E6%A0%BC%E5%BC%8F%E8%BD%AC%E6%8D%A2%EF%BC%89"><span class="toc-text">3. FFmpeg 分解与复用处理（媒体格式转换）</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#4-FFmpeg%E5%A4%84%E7%90%86%E5%8E%9F%E5%A7%8B%E6%95%B0%E6%8D%AE%E5%91%BD%E4%BB%A4"><span class="toc-text">4. FFmpeg处理原始数据命令</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#5-FFmpeg%E6%BB%A4%E9%95%9C%E5%91%BD%E4%BB%A4"><span class="toc-text">5. FFmpeg滤镜命令</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#6-FFmpeg%E8%A3%81%E5%89%AA%E4%B8%8E%E5%90%88%E5%B9%B6%E5%91%BD%E4%BB%A4"><span class="toc-text">6. FFmpeg裁剪与合并命令</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#7-%E5%9B%BE%E7%89%87-%E8%A7%86%E9%A2%91%E4%BA%92%E8%BD%AC"><span class="toc-text">7. 图片&#x2F;视频互转</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#8-%E7%9B%B4%E6%92%AD%E7%9B%B8%E5%85%B3%E7%9A%84%E5%91%BD%E4%BB%A4"><span class="toc-text">8. 直播相关的命令</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li></ol>
+      
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
+    
+      <div class="comments-container">
+        
+
+
+
+
+  
+    <script async type="text/javascript" src="/plugins/valine.min.js" onload="loadValineSuc(this)"></script>
+  
+
+  <div id="vcomments"></div>
+
+  <script>
+    function loadValineSuc() {
+      new Valine({
+        el: '#vcomments',
+        appId: 'oOhVZyeGYClJeXi7hL6mMis8-gzGzoHsz',
+        appKey: 'T2sc39tWFmhYbQiem6rTdkkc',
+        placeholder: 'Welcome!',
+        avatar: 'retro',
+        lang: 'en'
+      })
+    }
+  </script>
+
+    <style>
+      .comments-container .v .vempty {
+        display: none!important;
+      }
+    </style>
+
+
+
+
+      </div>
+    
+  </div>
+
+
+        
+<div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          <a title="github" target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">
+            <i class="iconfont icon-github"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Copyright © 2023 Oranges</a>
+        
+    </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Theme by Oranges | Powered by Hexo</a>
+        
+    </div>
+  
+  
+</div>
+
+      </div>
+
+      <div class="tools-bar">
+        <div class="back-to-top tools-bar-item hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+        
+  <div class="search-icon tools-bar-item" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="搜索...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>First search, index file loading, please wait...<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>No result<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>The search.xml file was not found, please refer to：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>The request failed, Try to refresh the page or try again later.<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+        
+  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
+    <a href="javascript: void(0)">
+      <i id="theme-icon" class="iconfont icon-moon"></i>
+    </a>
+  </div>
+
+  
+<script src="/js/colorscheme.js"></script>
+
+
+
+
+
+        
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + FFmpeg%20%E6%8A%80%E6%9C%AF%E5%9F%BA%E7%A1%80 + '&url=' + http%3A%2F%2Fexample.com%2F2021%2F10%2F27%2FFFmpeg-%25E6%258A%2580%25E6%259C%25AF%25E5%259F%25BA%25E7%25A1%2580%2F + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=http://example.com/2021/10/27/FFmpeg-%E6%8A%80%E6%9C%AF%E5%9F%BA%E7%A1%80/" target="_blank" title="Facebook">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        
+      </div>
+    </div>
+  
+  
+<script src="/js/shares.js"></script>
+
+
+
+      </div>
+    </div>
+  </body>
+</html>

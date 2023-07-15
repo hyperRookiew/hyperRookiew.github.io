@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en" color-mode="light">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  
+  <meta name="author" content="John Doe" />
+  <meta name="description" content="" />
+  
+  
+  <title>
+    
+      大脑Cache系列--系统地梳理下CSS3技术吧 
+      
+      
+      |
+    
+     Hexo
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
+  <!-- 代码块风格 -->
+  
+
+  <!-- jquery3.3.1 -->
+  
+    <script defer type="text/javascript" src="/plugins/jquery.min.js"></script>
+  
+
+  <!-- fancybox -->
+  
+    <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
+    <script defer type="text/javascript" src="/plugins/jquery.fancybox.min.js"></script>
+  
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+
+  
+
+  <script>
+    var html = document.documentElement
+    const colorMode = localStorage.getItem('color-mode')
+    if (colorMode) {
+      document.documentElement.setAttribute('color-mode', colorMode)
+    }
+  </script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="/images/avatar.png" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">欢迎来到我的博客!</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">主页</a>
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          <a href="/archives/">归档</a>
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          <a href="/tags/">标签</a>
+        </li>
+      
+        <li class="nav-item" data-path="/friends/">
+          <a href="/friends/">朋友</a>
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          <a href="/about/">关于</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+
+  <!-- LaTex Display -->
+
+  
+    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
+  
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    }
+  </script>
+
+
+
+
+
+  <!-- clipboard -->
+
+  
+    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
+  
+  
+<script src="/js/codeCopy.js"></script>
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">大脑Cache系列--系统地梳理下CSS3技术吧</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime mr-10" title="Update time"></i>
+          2023-07-15 17:13:23
+        </span>
+        
+              <span class="post-tags">
+                <i class="iconfont icon-tags mr-10" title="Tags"></i>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/%E5%89%8D%E7%AB%AF/" title="前端">
+                    #前端
+                  </a>
+                </span>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/CSS/" title="CSS">
+                    #CSS
+                  </a>
+                </span>
+                
+              </span>
+          
+      </div>
+      <div class="markdown-body">
+        <h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><blockquote>
+<ul>
+<li>视频云的开发已经进入正常的开发流程了，对前端框架层面已经有了一定的了解，需要返回补充前端核心接触知识了。</li>
+<li>在实际的开发中，调整样式总是花了我前端开发的一大半时间，主要还是对CSS不太熟悉，有必要系统学习一下。</li>
+<li>本文依然按照以往的风格，更注重CSS技术的系统性梳理，不赘述技术细节，因为Google一下就好。</li>
+</ul>
+</blockquote>
+<h3 id="CSS基础"><a href="#CSS基础" class="headerlink" title="CSS基础"></a>CSS基础</h3><h5 id="1-CSS的几种引入方式"><a href="#1-CSS的几种引入方式" class="headerlink" title="1.  CSS的几种引入方式"></a>1.  CSS的几种引入方式</h5><ul>
+<li>head中直接添加文档内样式代码</li>
+</ul>
+<span id="more"></span>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;style type=&quot;text/css&quot;&gt;</span><br><span class="line">&#123;</span><br><span class="line">    body&#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line">&lt;/style&gt;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>head中引入外部样式</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;common.css&quot;&gt;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>元素的style样式</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;div style=&quot;width:200px&quot;&gt;</span><br></pre></td></tr></table></figure>
+
+<h5 id="2-CSS3的几种选择器"><a href="#2-CSS3的几种选择器" class="headerlink" title="2.CSS3的几种选择器"></a>2.CSS3的几种选择器</h5><ul>
+<li>简单选择器（type，#id, .class）</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">每个元素的id是唯一的，class可以多个元素同时用</span><br><span class="line">选择器组</span><br><span class="line">ul, ol &#123;&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>属性选择器</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.class[width = 200px]&#123;&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>上下文选择器</li>
+<li>伪类选择器</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">//结构化伪类选择器</span><br><span class="line">e:first-child&#123;&#125; //第一个子元素设置</span><br><span class="line">e:last-child&#123;&#125;</span><br><span class="line">e:nth-child(2n+1)&#123;&#125; //奇数位置元素</span><br><span class="line">//UI伪类选择器</span><br><span class="line">e:visited&#123;&#125;</span><br><span class="line">hover,focus,active, checked</span><br></pre></td></tr></table></figure>
+<ul>
+<li>伪元素选择器</li>
+</ul>
+<h5 id="3-CSS的级联Casscading"><a href="#3-CSS的级联Casscading" class="headerlink" title="3. CSS的级联Casscading"></a>3. CSS的级联Casscading</h5><ul>
+<li>级联：一个元素可能会被多个CSS选择器选中，就会产生层叠&#x2F;级联效果。</li>
+<li>优先级规则算法：</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">1. 首先会判断重要性important</span><br><span class="line">    a &#123;</span><br><span class="line">        color:blue; !important</span><br><span class="line">    &#125;</span><br><span class="line">2. 规则来源： 开发者设置 &gt; 用户设置  &gt; 浏览器预设</span><br><span class="line">2. 基于明确程度，ID &gt; Class &gt; Type , 算法通过（I-C-T）分量来判断</span><br><span class="line">3. 顺序：后添加的生效</span><br></pre></td></tr></table></figure>
+<h5 id="4-CSS的继承"><a href="#4-CSS的继承" class="headerlink" title="4. CSS的继承"></a>4. CSS的继承</h5><ul>
+<li>子元素会继承来自父元素的属性</li>
+<li>不是所有的属性都是可继承的</li>
+</ul>
+<h5 id="5-厂商前缀"><a href="#5-厂商前缀" class="headerlink" title="5. 厂商前缀"></a>5. 厂商前缀</h5><ul>
+<li>为了解决不同厂商的浏览器的兼容问题</li>
+<li>常见的厂商前缀</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Chrome:     -webkit</span><br><span class="line">Firefox:    -moz</span><br><span class="line">Opera:      -o</span><br><span class="line">Safari:     -webkit</span><br></pre></td></tr></table></figure>
+
+<h3 id="CSS布局"><a href="#CSS布局" class="headerlink" title="CSS布局"></a>CSS布局</h3><h5 id="1-float"><a href="#1-float" class="headerlink" title="1. float"></a>1. float</h5><h5 id="2-Postion定位"><a href="#2-Postion定位" class="headerlink" title="2. Postion定位"></a>2. Postion定位</h5><h5 id="3-Flex"><a href="#3-Flex" class="headerlink" title="3. Flex"></a>3. Flex</h5><p>内容</p>
+<h3 id="CSS高级"><a href="#CSS高级" class="headerlink" title="CSS高级"></a>CSS高级</h3><h5 id="1-媒体查询"><a href="#1-媒体查询" class="headerlink" title="1. 媒体查询"></a>1. 媒体查询</h5><ul>
+<li>用来实现响应式布局控制</li>
+<li>类似编程语言中的if语句</li>
+<li>指定一组媒体条件，在满足所有媒体条件的时候，应用新的样式规则</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">@media(max-width:600px) and (width&lt;=600px) and (mf2) &#123;</span><br><span class="line">    prestyle&#123;</span><br><span class="line">        new style</span><br><span class="line">    &#125;</span><br><span class="line">    rules&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>开源库：<a target="_blank" rel="noopener" href="https://github.com/scottjehl/Respond/">Respond.js</a></p>
+<h5 id="2-mobile-first-的响应式设计"><a href="#2-mobile-first-的响应式设计" class="headerlink" title="2. mobile first 的响应式设计"></a>2. mobile first 的响应式设计</h5><ul>
+<li>之前的实现都是宽屏优先的，初始样式是面向宽屏的。</li>
+<li>移动优先的初始设计是面向手机设备，然后对逐渐宽屏进行响应式设计。</li>
+<li>优点：移动端是趋势，移动设备加载更快，在移动设备上不会去下载宽屏的样式文件。</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">css rules for mobile device </span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">@media screen and (min-width:768px)&#123;</span><br><span class="line">    rule1</span><br><span class="line">    rule2</span><br><span class="line">&#125;</span><br><span class="line">// 769px小屏， 972px中屏，1200px大屏</span><br></pre></td></tr></table></figure>
+
+<h5 id="3-CSS3的Transform"><a href="#3-CSS3的Transform" class="headerlink" title="3. CSS3的Transform"></a>3. CSS3的Transform</h5><ul>
+<li>为元素添加变形和变换效果，2D和3D</li>
+<li>行内元素（inline）不是transformable元素，其他常见的都是的</li>
+<li>Transform 对于元素的内容，边框，边距等都会生效。</li>
+<li>实质上是进行矩阵变换</li>
+<li>默认以元素的中心为Transform的基点，可以通过transform-origin更改</li>
+<li>几个基本操作</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">transform: rotate(45deg);   //旋转45度，度数可以是负数</span><br><span class="line">transform: scale(x-value,y-value); //x,y方向上的缩放</span><br><span class="line">transform: translate(x-value,y-value)//在xy上移动</span><br><span class="line">transform: skew(45deg,45deg)   //x和y方向上倾斜度数</span><br><span class="line">transform: rotate(45deg) scale(3);  //多个transform组合使用，需要注意的是从右向左生效的</span><br><span class="line">transform-origin: left top; //将Transform的基点变成左上角</span><br></pre></td></tr></table></figure>
+
+<h5 id="4-CSS3的Transition"><a href="#4-CSS3的Transition" class="headerlink" title="4. CSS3的Transition"></a>4. CSS3的Transition</h5><ul>
+<li>用于给文档中的样式变化添加过渡效果</li>
+<li>不是所有的CSS属性都可以添加过渡效果</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">transition-property: width, background-color;     //设置transition关注的属性值的变化</span><br><span class="line">transition-property: all;       //为所有的可添加属性添加transition效果</span><br><span class="line">transition-duration: 3s, 1ms;        //各个属性平滑过渡效果的持续时长</span><br><span class="line">transition-delay：1s, 2ms;      //执行过渡效果动画的等待时间</span><br><span class="line">transition-timing-function: linear | ease-in | ease-out | ease-in-out | ease; //设置渐变的时间函数(常用的5个)</span><br><span class="line">transition: property duration func delay;       // 简写属性</span><br></pre></td></tr></table></figure>
+
+<h5 id="6-CSS3的Animation"><a href="#6-CSS3的Animation" class="headerlink" title="6. CSS3的Animation"></a>6. CSS3的Animation</h5><ul>
+<li>与Transition的不同：Animation可以支持一个系列的变化，而Transition只能实现从一个状态过渡到另一个</li>
+<li>实现本质方式：指定元素在动画中的关键帧状态</li>
+<li>例子： 实现弹球动画</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">// 先定义了一个动画序列效果</span><br><span class="line">@Keyframes bounce &#123;     </span><br><span class="line">    0% &#123;</span><br><span class="line">        left: 0px;</span><br><span class="line">        top: 0px;</span><br><span class="line">    &#125;</span><br><span class="line">    0% &#123;</span><br><span class="line">        left: 50px;</span><br><span class="line">        top: 100px;</span><br><span class="line">    &#125;</span><br><span class="line">    0% &#123;</span><br><span class="line">        left: 100px;</span><br><span class="line">        top: 0px;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">// 应用动画序列效果</span><br><span class="line">.box:hover .ball &#123;</span><br><span class="line">    animation: bounce 4s linear 0s;     //鼠标悬停的时候触发动画</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>动画循环次数属性：animation-iteration-count</li>
+<li>动画方向属性：animation-direction</li>
+</ul>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>内容</p>
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/2021/09/28/BroswerRouter%E4%BB%A5%E5%8F%8AHashRouter%E7%9A%84React%E5%89%8D%E7%AB%AF%E9%A1%B9%E7%9B%AE%E5%9C%A8Nginx%E4%B8%8A%E9%83%A8%E7%BD%B2/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>Prev</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime mr-10" title="Update time"></i>
+              2023-07-15 17:13:23
+            </span>
+            
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags mr-10" title="Tags"></i>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/%E5%89%8D%E7%AB%AF/" title="前端">
+                        #前端
+                      </a>
+                    </span>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/CSS/" title="CSS">
+                        #CSS
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+              <a href="/2021/10/14/%E5%89%8D%E7%AB%AFJavaScript%E7%B3%BB%E7%BB%9F%E6%A2%B3%E7%90%86/" target="_self">
+                <span>Next</span>
+                <i class="iconfont icon-chevronright"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+    </div>
+    
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">Contents</div>
+    <div class="catalog-content">
+      
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-text">背景</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CSS%E5%9F%BA%E7%A1%80"><span class="toc-text">CSS基础</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1-CSS%E7%9A%84%E5%87%A0%E7%A7%8D%E5%BC%95%E5%85%A5%E6%96%B9%E5%BC%8F"><span class="toc-text">1.  CSS的几种引入方式</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2-CSS3%E7%9A%84%E5%87%A0%E7%A7%8D%E9%80%89%E6%8B%A9%E5%99%A8"><span class="toc-text">2.CSS3的几种选择器</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3-CSS%E7%9A%84%E7%BA%A7%E8%81%94Casscading"><span class="toc-text">3. CSS的级联Casscading</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#4-CSS%E7%9A%84%E7%BB%A7%E6%89%BF"><span class="toc-text">4. CSS的继承</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#5-%E5%8E%82%E5%95%86%E5%89%8D%E7%BC%80"><span class="toc-text">5. 厂商前缀</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CSS%E5%B8%83%E5%B1%80"><span class="toc-text">CSS布局</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1-float"><span class="toc-text">1. float</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2-Postion%E5%AE%9A%E4%BD%8D"><span class="toc-text">2. Postion定位</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3-Flex"><span class="toc-text">3. Flex</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CSS%E9%AB%98%E7%BA%A7"><span class="toc-text">CSS高级</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1-%E5%AA%92%E4%BD%93%E6%9F%A5%E8%AF%A2"><span class="toc-text">1. 媒体查询</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2-mobile-first-%E7%9A%84%E5%93%8D%E5%BA%94%E5%BC%8F%E8%AE%BE%E8%AE%A1"><span class="toc-text">2. mobile first 的响应式设计</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3-CSS3%E7%9A%84Transform"><span class="toc-text">3. CSS3的Transform</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#4-CSS3%E7%9A%84Transition"><span class="toc-text">4. CSS3的Transition</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#6-CSS3%E7%9A%84Animation"><span class="toc-text">6. CSS3的Animation</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li></ol>
+      
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
+    
+      <div class="comments-container">
+        
+
+
+
+
+  
+    <script async type="text/javascript" src="/plugins/valine.min.js" onload="loadValineSuc(this)"></script>
+  
+
+  <div id="vcomments"></div>
+
+  <script>
+    function loadValineSuc() {
+      new Valine({
+        el: '#vcomments',
+        appId: 'oOhVZyeGYClJeXi7hL6mMis8-gzGzoHsz',
+        appKey: 'T2sc39tWFmhYbQiem6rTdkkc',
+        placeholder: 'Welcome!',
+        avatar: 'retro',
+        lang: 'en'
+      })
+    }
+  </script>
+
+    <style>
+      .comments-container .v .vempty {
+        display: none!important;
+      }
+    </style>
+
+
+
+
+      </div>
+    
+  </div>
+
+
+        
+<div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          <a title="github" target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">
+            <i class="iconfont icon-github"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Copyright © 2023 Oranges</a>
+        
+    </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Theme by Oranges | Powered by Hexo</a>
+        
+    </div>
+  
+  
+</div>
+
+      </div>
+
+      <div class="tools-bar">
+        <div class="back-to-top tools-bar-item hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+        
+  <div class="search-icon tools-bar-item" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="搜索...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>First search, index file loading, please wait...<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>No result<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>The search.xml file was not found, please refer to：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>The request failed, Try to refresh the page or try again later.<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+        
+  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
+    <a href="javascript: void(0)">
+      <i id="theme-icon" class="iconfont icon-moon"></i>
+    </a>
+  </div>
+
+  
+<script src="/js/colorscheme.js"></script>
+
+
+
+
+
+        
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + %E5%A4%A7%E8%84%91Cache%E7%B3%BB%E5%88%97--%E7%B3%BB%E7%BB%9F%E5%9C%B0%E6%A2%B3%E7%90%86%E4%B8%8BCSS3%E6%8A%80%E6%9C%AF%E5%90%A7 + '&url=' + http%3A%2F%2Fexample.com%2F2021%2F10%2F10%2FCSS%25E6%258A%2580%25E6%259C%25AF%25E7%25B3%25BB%25E7%25BB%259F%25E6%25A2%25B3%25E7%2590%2586%2F + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=http://example.com/2021/10/10/CSS%E6%8A%80%E6%9C%AF%E7%B3%BB%E7%BB%9F%E6%A2%B3%E7%90%86/" target="_blank" title="Facebook">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        
+      </div>
+    </div>
+  
+  
+<script src="/js/shares.js"></script>
+
+
+
+      </div>
+    </div>
+  </body>
+</html>

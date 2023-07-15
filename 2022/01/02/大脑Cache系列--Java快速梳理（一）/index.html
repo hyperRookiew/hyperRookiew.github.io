@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en" color-mode="light">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  
+  <meta name="author" content="John Doe" />
+  <meta name="description" content="" />
+  
+  
+  <title>
+    
+      大脑Cache系列--Java快速梳理，方便随时load到大脑，减少低级bug (一) 
+      
+      
+      |
+    
+     Hexo
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
+  <!-- 代码块风格 -->
+  
+
+  <!-- jquery3.3.1 -->
+  
+    <script defer type="text/javascript" src="/plugins/jquery.min.js"></script>
+  
+
+  <!-- fancybox -->
+  
+    <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
+    <script defer type="text/javascript" src="/plugins/jquery.fancybox.min.js"></script>
+  
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+
+  
+
+  <script>
+    var html = document.documentElement
+    const colorMode = localStorage.getItem('color-mode')
+    if (colorMode) {
+      document.documentElement.setAttribute('color-mode', colorMode)
+    }
+  </script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="/images/avatar.png" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">欢迎来到我的博客!</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">主页</a>
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          <a href="/archives/">归档</a>
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          <a href="/tags/">标签</a>
+        </li>
+      
+        <li class="nav-item" data-path="/friends/">
+          <a href="/friends/">朋友</a>
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          <a href="/about/">关于</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+
+  <!-- LaTex Display -->
+
+  
+    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
+  
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    }
+  </script>
+
+
+
+
+
+  <!-- clipboard -->
+
+  
+    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
+  
+  
+<script src="/js/codeCopy.js"></script>
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">大脑Cache系列--Java快速梳理，方便随时load到大脑，减少低级bug (一)</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime mr-10" title="Update time"></i>
+          2023-07-15 17:13:23
+        </span>
+        
+              <span class="post-tags">
+                <i class="iconfont icon-tags mr-10" title="Tags"></i>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/Java/" title="Java">
+                    #Java
+                  </a>
+                </span>
+                
+              </span>
+          
+      </div>
+      <div class="markdown-body">
+        <h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><blockquote>
+<ul>
+<li>Java程序常常会遇到一些蛋疼的bug，最后发现，都是在一些很基础的方面造成的。大量的时间花在调试代码找低级bug上是十分没有性价比的。所以，再系统梳理下Java，是十分必要的。</li>
+<li>已经反复学习和使用Java多次了，但只要有段时间没用Java之后，每次使用前都想要重头再梳理一遍。本文章将更注重Java知识的系统性，而不是细节性。</li>
+<li>本文是本人大脑的专属Cache，所以逻辑上可能只有我自己能够看懂，见谅。</li>
+</ul>
+</blockquote>
+<h3 id="一、目录"><a href="#一、目录" class="headerlink" title="一、目录"></a>一、目录</h3><ul>
+<li>数据类型，字符串，数组</li>
+<li>基础语句语法</li>
+<li>类与对象</li>
+</ul>
+<span id="more"></span>
+
+<h3 id="二、基础语法"><a href="#二、基础语法" class="headerlink" title="二、基础语法"></a>二、基础语法</h3><blockquote>
+<ul>
+<li>其实还是有很多基础知识，是自己平时写代码的时候没有注意到的，而这很容易导致一些低级bug，耗费大量的调试时间。</li>
+</ul>
+</blockquote>
+<h5 id="命令"><a href="#命令" class="headerlink" title="命令"></a>命令</h5><ul>
+<li>编译命令: javac Main.java，.java代码成为.class字节码。<ul>
+<li>JIT编译器：编译与解释共存，JIT能够将热点代码直接编译成机器码，直接再JVM上执行。</li>
+</ul>
+</li>
+<li>运行:java Main， JVM加载字节码，解释成机器码执行。</li>
+<li>版本：java -version</li>
+</ul>
+<h5 id="8种基本类型"><a href="#8种基本类型" class="headerlink" title="8种基本类型"></a>8种基本类型</h5><ul>
+<li>整数：byte(8)，short(16)，int(32)，long(64)</li>
+<li>浮点：float(32)，double(64)</li>
+<li>Unicode编码的char（16位，两个字节），相当于一个整型值（ASCII）</li>
+<li>boolean（1）</li>
+<li>因为JVM的存在，各数据类型的取值范围与具体的机器是无关的。</li>
+<li>基础数据类型存储在栈中，不存储在堆上。</li>
+</ul>
+<h5 id="整型"><a href="#整型" class="headerlink" title="整型"></a>整型</h5><ul>
+<li>java的整形均是有<strong>符号的</strong>，计算整型的数据范围</li>
+<li>注意：在java中，为了保障移植性，<strong>整型的范围与实际的机器无关（C和C++中整型范围和目标平台是相关的）</strong>，JVM解决了不同机器整型之间的差别。</li>
+<li>byte：1字节，一般很少用，用在底层文件处理，或者占用存储空间的大数组</li>
+<li>short：2字节，和byte用处类似</li>
+<li>int：4字节，最常用</li>
+<li>long：8字节，比如需要表示星球上的居住人数，可以使用long，后缀可以加一个L或者l标识</li>
+<li>更易读的整数方式：1_000_000, java编译器会自动去除这些下划线。</li>
+</ul>
+<h5 id="浮点类型"><a href="#浮点类型" class="headerlink" title="浮点类型"></a>浮点类型</h5><ul>
+<li>float 4字节，有效位6-7位 </li>
+<li>double 8字节，有效位15位</li>
+<li><strong>默认为double，一般也很少用float（float的精度一般很难满足需求），除非在需要处理或者存储大量数据</strong></li>
+<li>double后缀D或d，float后缀F或者f</li>
+<li>特殊浮点数值（一般用不到）<ul>
+<li>正无穷大：Double.POSITIVE_INFINITY</li>
+<li>负无穷大: Double.NEGATIVE_INFINITY</li>
+<li>非数字: Double.NaN, 判断用Double.isNaN(n),不能用 &#x3D;&#x3D; 号</li>
+</ul>
+</li>
+</ul>
+<h5 id="字符类型char"><a href="#字符类型char" class="headerlink" title="字符类型char"></a>字符类型char</h5><ul>
+<li>Java的char采用Unicode编码</li>
+<li>占用两个字节</li>
+<li>‘A’,”A”的区别：前者是字符类型常量，占两个字节，后者是字符串常量，存储在堆上。</li>
+</ul>
+<h5 id="boolean"><a href="#boolean" class="headerlink" title="boolean"></a>boolean</h5><ul>
+<li><strong>和C++不一样，整型和boolean之间不能相互转换</strong></li>
+</ul>
+<h5 id="大数值-BigInteger-BigDecimal"><a href="#大数值-BigInteger-BigDecimal" class="headerlink" title="大数值 BigInteger BigDecimal"></a>大数值 BigInteger BigDecimal</h5><ul>
+<li>不是一个java基础类型，而是一个java对象，可以表示任意精度的整型和浮点数。</li>
+<li><strong>无法通过运算符计算，需要通过对应的方法进行运算。</strong></li>
+<li>一般可以用在金额的计算。</li>
+</ul>
+<h5 id="变量"><a href="#变量" class="headerlink" title="变量"></a>变量</h5><ul>
+<li>声明-&gt;初始化-&gt;使用</li>
+<li>Java变量在使用之前必须要进行初始化，否则会编译报错。</li>
+</ul>
+<h5 id="常量与类常量（静态常量）"><a href="#常量与类常量（静态常量）" class="headerlink" title="常量与类常量（静态常量）"></a>常量与类常量（静态常量）</h5><ul>
+<li>final表示常量，只能被赋值一次，且声明的时候必须初始化</li>
+<li>常量名推荐使用全大写,<code>final int NUMBER = 10;</code></li>
+<li>static final，类常量，可以在类中多个方法中使用</li>
+<li>注意：与C++不同，常量不是通过const声明的，Java中const是保留字，但没有实际作用。</li>
+</ul>
+<h5 id="常用的Math静态方法"><a href="#常用的Math静态方法" class="headerlink" title="常用的Math静态方法"></a>常用的Math静态方法</h5><ul>
+<li>平方根：<code>double result = Math.sqrt(double x);</code></li>
+<li>幂运算：<code>double result = Math.pow(x,a);</code></li>
+<li>四舍五入：<code>long n = Math.round(double x);</code></li>
+<li>随机数: <code>Math.random()</code>,返回0-1之间的随机浮点数，比如要取0 - n-1之间的随机数，<code>int result = (int)(Math.random() * n)</code>.</li>
+</ul>
+<h5 id="类型转换"><a href="#类型转换" class="headerlink" title="类型转换"></a>类型转换</h5><ul>
+<li>强制类型转换会导致结果被截断成一个完全不同的值，比如(byte)300 的值为 44</li>
+<li>不要将boolean与任何类型之间做类型转换。</li>
+</ul>
+<h5 id="枚举类型"><a href="#枚举类型" class="headerlink" title="枚举类型"></a>枚举类型</h5><ul>
+<li>自定义枚举类型</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">enum Size &#123;</span><br><span class="line">  SMALL, LARGE, EXTRA_LARGE</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>使用</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Size size = Size.SMALL;</span><br></pre></td></tr></table></figure>
+
+<h5 id="字符串String类型"><a href="#字符串String类型" class="headerlink" title="字符串String类型"></a>字符串String类型</h5><ul>
+<li>不是Java的基础类型，而是一个预定义类。</li>
+<li><strong>和C++不同，Java中的String不是字符数组，而是一个对象，可以理解为char*指针</strong></li>
+<li>Java 的字符串是<strong>不可变的</strong>，对字符串的修改，实际上是创建了一个新的String对象，目的是为了复用和共享存在堆上的字符串**<ul>
+<li>源码中字符串内容有final修饰。</li>
+</ul>
+</li>
+<li>对字符串修改的需求没有对字符串进行比较的需求大。<ul>
+<li>比较：equals</li>
+<li>修改：StringBuffer，StringBuilder</li>
+</ul>
+</li>
+<li>字符串比较：要使用equal(str)方法，而不能使用 &#x3D;&#x3D; 来判断<ul>
+<li>因Java没有像C++那样，重载了&#x3D;&#x3D;运算符。</li>
+<li>&#x3D;&#x3D;实际判断的是两个字符串变量是否引用的是同一个存储位置，而不是内容。</li>
+<li>所以 &#x3D;&#x3D; 判断的结果是未知的，常常会导致隐藏bug。</li>
+</ul>
+</li>
+<li>字符串判空,<strong>区分空串和Null串</strong><ul>
+<li>if(str !&#x3D; null &amp;&amp; str.length()!&#x3D;0)</li>
+</ul>
+</li>
+<li>当创建 String 类型的对象时，虚拟机会在常量池中查找有没有已经存在的值和要创建的值相同的对象，如果有就把它赋给当前引用。如果没有就在常量池中重新创建一个 String 对象。</li>
+<li>码点与代码单元<ul>
+<li><strong>最好避免直接操作char，这太底层了</strong></li>
+<li>str.length()返回的是代码单元个数</li>
+<li>str.codePointCount(0,str.length()),统计的是码点数量</li>
+<li>str.charAt(n),获取n位置的代码单元</li>
+<li>关于代码单元与码点：</li>
+</ul>
+</li>
+</ul>
+<h5 id="常用的String-API"><a href="#常用的String-API" class="headerlink" title="常用的String API"></a>常用的String API</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">char</span> <span class="title function_">charAt</span><span class="params">(<span class="type">int</span> index)</span></span><br><span class="line"><span class="type">boolean</span> <span class="title function_">equals</span><span class="params">(Object obj)</span></span><br><span class="line"><span class="type">boolean</span> <span class="title function_">equalsIgnoreCase</span><span class="params">(String str)</span></span><br><span class="line"><span class="type">boolean</span> <span class="title function_">startsWith</span><span class="params">(String prefix)</span>，判断是否是以prefix为前缀</span><br><span class="line"><span class="type">boolean</span> <span class="title function_">endsWith</span><span class="params">(String suffix)</span>，判断是否以suffix为后缀</span><br><span class="line"><span class="type">boolean</span> <span class="title function_">indexof</span><span class="params">(String str)</span>, 找到字串str第一次出现的位置，没有则返回-<span class="number">1</span></span><br><span class="line"><span class="type">int</span> <span class="title function_">length</span><span class="params">()</span>,字符串长度</span><br><span class="line"><span class="type">int</span> <span class="title function_">codePointCount</span><span class="params">(<span class="type">int</span> startIndex, <span class="type">int</span> endIndex)</span>,统计代码点数目</span><br><span class="line">String <span class="title function_">substring</span><span class="params">(<span class="type">int</span> begin , <span class="type">int</span> end)</span>;</span><br><span class="line">String <span class="title function_">toLowerCase</span><span class="params">()</span>, toUpperCase()</span><br><span class="line">Stirng <span class="title function_">trim</span><span class="params">()</span>, 删除字符串开始和结尾的空格</span><br><span class="line">String <span class="title function_">join</span><span class="params">(<span class="string">&#x27;divider&#x27;</span>,CharSequence...emements)</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="StringBuilder，StringBuffer字符串构造"><a href="#StringBuilder，StringBuffer字符串构造" class="headerlink" title="StringBuilder，StringBuffer字符串构造"></a>StringBuilder，StringBuffer字符串构造</h5><ul>
+<li>在有构造字符串或者修改字符串的情况下，不适合使用String，因为是不可变的。</li>
+<li>推荐使用StringBuilder（单线程）或者StringBuffer（多线程）。</li>
+<li>使用方式</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">String builder = new StringBuilder(); // 创建一个构造器</span><br><span class="line">builder.append(&quot;hello&quot;);</span><br><span class="line">builder.append(&quot;world&quot;); // 追加字符或者字符串</span><br><span class="line">String str = builder.toString(); // 构造String对象</span><br><span class="line">// 其他api</span><br><span class="line">builder.setCharAt(index,char)</span><br><span class="line">builder.delete(start,end)</span><br><span class="line">builder.insert(offset,string)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>StringBuilder的前身是StringBuffer，但是StringBuffer的效率要低一些，因为它是线程安全的，允许多线程操作</li>
+<li>而StringBuilder是非线程安全的，一般在单线程的应用。而在并发中使用StringBuffer</li>
+<li>他们的API是一样的</li>
+</ul>
+<h5 id="读取输入"><a href="#读取输入" class="headerlink" title="读取输入"></a>读取输入</h5><ul>
+<li>从控制台读取基础数据类型</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Scanner scan = new Scanner(System.in); //创建scanner，并与标准输入关联,System.in的类型为InputStream</span><br><span class="line">scan.nextLine();</span><br><span class="line">scan.next();</span><br><span class="line">scan.nextInt();</span><br><span class="line">scan.nextDouble();</span><br><span class="line">scan.hasNext();</span><br><span class="line">scan.hasNextInt();</span><br></pre></td></tr></table></figure>
+<ul>
+<li>从控制台读取密码</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">// java se 6 提供了Console类实现读取密码</span><br><span class="line">Console console = System.console();</span><br><span class="line">Stirng userName = console.readLine(&quot;UserName:&quot;);</span><br><span class="line">char [] psd = console.readPassword(&quot;Password:&quot;);</span><br></pre></td></tr></table></figure>
+
+<h5 id="字符文件输入输出"><a href="#字符文件输入输出" class="headerlink" title="字符文件输入输出"></a>字符文件输入输出</h5><ul>
+<li>读取字符文件</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Scanner scan = new Scanner(Path.get(&quot;pathstring&quot;),&quot;UTF-8&quot;); // 路径是相对于Java虚拟机启动路径的相对位置</span><br><span class="line">scan.readLine()....等一系列方法</span><br></pre></td></tr></table></figure>
+<ul>
+<li>写字符文件</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">PrintWriter out = new PrintWriter(&quot;filename.txt&quot;,&quot;UTF-8&quot;);</span><br><span class="line">out.println(&quot;hhh&quot;);</span><br></pre></td></tr></table></figure>
+<ul>
+<li>对于处理文件的Scanner以及PrintWriter，需要在方法中处理异常</li>
+</ul>
+<h5 id="Java的块作用域"><a href="#Java的块作用域" class="headerlink" title="Java的块作用域"></a>Java的块作用域</h5><ul>
+<li><strong>和C++不一样，Java不允许在嵌套块中重复定义一个变量，会编译错误</strong></li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  int n;</span><br><span class="line">  &#123;</span><br><span class="line">    int n; // 这种写法在java中是编译不过的</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="switch-case-break"><a href="#switch-case-break" class="headerlink" title="switch case break"></a>switch case break</h5><ul>
+<li>虽然很简单，但周围很多人都会用错</li>
+<li>break的意思是，本case如果命中了，在执行结束之后，中断之后的case检查，直接返回。</li>
+<li>多个case可以公用同一个处理函数</li>
+<li>case标签的类型可以是char，4种整型，枚举常量，以及字符串常量（Java7开始支持）</li>
+</ul>
+<h5 id="数组"><a href="#数组" class="headerlink" title="数组"></a>数组</h5><ul>
+<li><p>数组声明：int [] array;</p>
+</li>
+<li><p>数组初始化： array &#x3D; new int [100];</p>
+<ul>
+<li>需要指定数组初始大小，可以是整型n变量，数组创建之后大小无法更改。（如果需要，使用数组列表）</li>
+<li>整型数组所有元素初始化为0，boolean初始化为false，对象类型初始化为null</li>
+</ul>
+</li>
+<li><p>数组元素个数：array.length</p>
+</li>
+<li><p>数组for循环：for(int item : array)</p>
+</li>
+<li><p>数组拷贝</p>
+<ul>
+<li>浅拷贝：直接将一个数据变量的值赋值给另一个数组变量，两个数组变量引用的是堆中的同一个数组，对一个的修改会影响到另一个</li>
+<li>深拷贝：在原来的基础上，新创建一个一模一样的数组，或者更长的数组。Array提供了copyOf方法<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> [] newArray = Array.copyOf(array,array.length+<span class="number">10</span>); <span class="comment">// 拷贝array数组，长度加10</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p>Java中的数据是在堆上创建的，相当于C++中的<code>int * a = new int[30];</code>,而不是<code>int a[10];</code>,这是在栈中的数组。</p>
+</li>
+<li><p>多维数组：数组的元素还是数组而已，且Java还支持不规则的数组（行列不一定要求是整齐的），C++是不支持的</p>
+</li>
+</ul>
+<h3 id="类与对象"><a href="#类与对象" class="headerlink" title="类与对象"></a>类与对象</h3><ul>
+<li>类与对象的关系：模板，实例</li>
+<li>类之间的三种关系</li>
+<li>对象与对象变量（对象引用）<ul>
+<li>对象实例存储在堆上，对象引用存储在栈中。</li>
+<li>一个对象实例可以被多个变量引用，一个变量可以引用0或1个对象实例。</li>
+</ul>
+</li>
+<li>预定义类（String，Date，LocalDate）与自定义类</li>
+<li>Java多源文件的使用：Java编译器内置了类似UNIX的make功能，在编译的时候，能够自动查找需要依赖的其他类，有class文件就直接使用，没有则查找java文件并编译。</li>
+<li>Java中，所有的方法都必须包含在类中</li>
+<li>private私有域，只有属于同一个类的对象（本身，其他同类对象）才可以访问。</li>
+<li>final常量、final方法：</li>
+<li>静态变量、静态常量、静态方法</li>
+<li>静态方法中不能访问非静态实例域，但可以访问静态域。</li>
+<li>main()方法是一个静态方法，它不对任何对象进行操作，负责在程序启动的时候创建对象。</li>
+<li>每个类都可以实现一个main方法，用来进行单元测试，在执行完整Application时候，每个单元中的main并不会执行。</li>
+</ul>
+<h5 id="对象构造与构造函数"><a href="#对象构造与构造函数" class="headerlink" title="对象构造与构造函数"></a>对象构造与构造函数</h5><ul>
+<li>构造函数：Java的对象都是在堆上构造的，通过new操作符在堆上创建新对象。构造函数在new对象的时候被调用。<ul>
+<li>与C++中对象的构造做区分，C++中支持在栈和堆上创建对象，Java对象与后者类似。</li>
+</ul>
+</li>
+<li>构造函数不允许被重写Override</li>
+<li>推荐在自定义多参数构造函数的时候，提供一个空参数的构造函数<ul>
+<li>因为若子类在构造函数中没有通过super方式调用父类构造函数，Java会默认调用父类的无参数构造函数。若父类没有空构造函数，则会编译错误。</li>
+</ul>
+</li>
+</ul>
+<h5 id="对象域的初始化"><a href="#对象域的初始化" class="headerlink" title="对象域的初始化"></a>对象域的初始化</h5><ul>
+<li>三种域初始化方式：在构造器中初始化，声明中初始化，在初始化块</li>
+<li>在用户没给构造函数的时候，系统会自动提供一个无参构造函数，一旦用户提供了，系统就不再提供无参构造函数。</li>
+<li>对象中的域，默认被初始化为0，false，以及null</li>
+<li>域的初始化也可以直接在声明时进行，好习惯是在声明变量域的时候，就给个安全的初始值。（C++中是不允许的，只能通过构造函数初始化域）</li>
+<li>初始化块：一个或多个代码块，只要构造类对象，这些初始化块就一定会执行，一般用于初始化比较复杂的情况。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Employee</span>&#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="type">int</span> id;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 初始化块</span></span><br><span class="line">  <span class="keyword">static</span></span><br><span class="line">  &#123;</span><br><span class="line">    <span class="type">Random</span> <span class="variable">generator</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Random</span>(); </span><br><span class="line">    id = generator.nextInt(<span class="number">1000</span>); <span class="comment">// 生成0-999的随机数</span></span><br><span class="line">    System.out.println(<span class="string">&quot;hello&quot;</span>); <span class="comment">//也可以执行非初始化语句的</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>具体的域初始化步骤</li>
+<li>1.所有数据域被初始化为0，false、null</li>
+<li>2.按照类中各个数据域声明出现的前后顺序，执行各自的初始化语句以及初始化块。</li>
+<li>3.执行构造器内容</li>
+</ul>
+<h5 id="对象析构-finalize方法"><a href="#对象析构-finalize方法" class="headerlink" title="对象析构 finalize方法"></a>对象析构 finalize方法</h5><ul>
+<li>Java有自动的垃圾回收器，所以不像C++，没有显式的析构器。</li>
+<li>可以为类添加一个finalize方法，该方法在对象被清楚之前调用。</li>
+<li><strong>实际应用中，避免在finalize中去释放资源，因为finalize什么时候被执行是无法确定的</strong></li>
+<li>对于一些资源的使用，要提供一个close方法，在使用完毕后调用。</li>
+<li>可以通过Runtime.addShutdownHook 方法来添加关闭钩子的方式更好的实现。</li>
+</ul>
+<h5 id="方法参数传递"><a href="#方法参数传递" class="headerlink" title="方法参数传递"></a>方法参数传递</h5><ul>
+<li>Java的参数传递是<strong>传值调用</strong>的，方法得到的是参数的拷贝，且<strong>方法内无法修改传递进来的参数</strong>。</li>
+<li>对于基本数据类型，直接传入的是数据拷贝，而对于对象，传入的是对象引用的拷贝（<strong>容易理解为传引用调用，但实际是通过传值调用实现的，只是这里的值是对象引用</strong>）。</li>
+<li>对于基本数据类型参数，参数传递不会改变参数变量的值。</li>
+<li>对于对象引用参数，方法内可以通过对象应用去修改对象内容。</li>
+<li>对于对象引用参数，无法将对象引用参数指向另一个新对象。</li>
+</ul>
+<h5 id="重载"><a href="#重载" class="headerlink" title="重载"></a>重载</h5><ul>
+<li>重载：overloading，多个方法，有相同的名字，但有不同的参数列表。</li>
+<li>重载解析：编译器负责根据参数列表，匹配正确的函数。</li>
+<li>函数签名：函数名+参数列表，<strong>注意，返回类型不属于函数签名，不能通过不同的返回类型来重载</strong></li>
+</ul>
+<h5 id="包-package"><a href="#包-package" class="headerlink" title="包 package"></a>包 package</h5><ul>
+<li>通过包来组织类，文件目录方式，避免重名</li>
+<li>import导入类、静态导入</li>
+<li>将类放入包中：<ul>
+<li>1.类源代码开头添加 package path; （没有该行，则该类属于默认包）</li>
+<li>2.将类源文件放在package对应的问价夹中</li>
+</ul>
+</li>
+<li><strong>编译器在编译文件的时候是不关注目录结构的，但定位一个类的时候，通过包名和类名来定位。所以，必须将类源代码放在package对应的文件夹下，否则虚拟机找不到类</strong></li>
+<li>包作用域：不添加public和private时，默认的作用域。同一个包中都可以访问。</li>
+</ul>
+<h5 id="类路径"><a href="#类路径" class="headerlink" title="类路径"></a>类路径</h5><ul>
+<li>从三个地方加载类<ul>
+<li>1.JRE中的JAR文件</li>
+<li>2.第三方JAR文件</li>
+<li>3.用户源程序目录</li>
+</ul>
+</li>
+<li>通过<code>java -classpath </code>或者设置<code>CLASSPATH</code>环境变量来设置类路径。</li>
+</ul>
+<h5 id="类注释"><a href="#类注释" class="headerlink" title="类注释"></a>类注释</h5><ul>
+<li>javadoc，由源文件生成html</li>
+<li>类注释</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">  类注释</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">hhh</span>&#123;&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>方法注释</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* desc hh</span></span><br><span class="line"><span class="comment">* <span class="doctag">@param</span> id</span></span><br><span class="line"><span class="comment">* <span class="doctag">@return</span> void</span></span><br><span class="line"><span class="comment">* <span class="doctag">@throws</span></span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">hh</span><span class="params">(<span class="type">int</span> id)</span>&#123;&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>域注释</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* desc</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="type">int</span> id;</span><br></pre></td></tr></table></figure>
+
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>欲知后事如何，且听下回，太长了，逃。</p>
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/2021/12/16/update-alternatives-%E8%AE%A9%E5%A4%9A%E4%B8%AA%E7%89%88%E6%9C%AC%E5%BA%93%E5%85%B1%E5%AD%98/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>Prev</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime mr-10" title="Update time"></i>
+              2023-07-15 17:13:23
+            </span>
+            
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags mr-10" title="Tags"></i>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/Java/" title="Java">
+                        #Java
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+              <a href="/2022/01/06/%E5%A4%A7%E8%84%91Cache%E7%B3%BB%E5%88%97-Java%E5%BF%AB%E9%80%9F%E6%A2%B3%E7%90%86%EF%BC%8C%E6%96%B9%E4%BE%BF%E9%9A%8F%E6%97%B6load%E5%88%B0%E5%A4%A7%E8%84%91%EF%BC%8C%E5%87%8F%E5%B0%91%E4%BD%8E%E7%BA%A7bug%EF%BC%88%E4%BA%8C%EF%BC%89/" target="_self">
+                <span>Next</span>
+                <i class="iconfont icon-chevronright"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+    </div>
+    
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">Contents</div>
+    <div class="catalog-content">
+      
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-text">背景</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E7%9B%AE%E5%BD%95"><span class="toc-text">一、目录</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95"><span class="toc-text">二、基础语法</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%91%BD%E4%BB%A4"><span class="toc-text">命令</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#8%E7%A7%8D%E5%9F%BA%E6%9C%AC%E7%B1%BB%E5%9E%8B"><span class="toc-text">8种基本类型</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%95%B4%E5%9E%8B"><span class="toc-text">整型</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%B5%AE%E7%82%B9%E7%B1%BB%E5%9E%8B"><span class="toc-text">浮点类型</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%AD%97%E7%AC%A6%E7%B1%BB%E5%9E%8Bchar"><span class="toc-text">字符类型char</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#boolean"><span class="toc-text">boolean</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%A4%A7%E6%95%B0%E5%80%BC-BigInteger-BigDecimal"><span class="toc-text">大数值 BigInteger BigDecimal</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%8F%98%E9%87%8F"><span class="toc-text">变量</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%B8%B8%E9%87%8F%E4%B8%8E%E7%B1%BB%E5%B8%B8%E9%87%8F%EF%BC%88%E9%9D%99%E6%80%81%E5%B8%B8%E9%87%8F%EF%BC%89"><span class="toc-text">常量与类常量（静态常量）</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E7%9A%84Math%E9%9D%99%E6%80%81%E6%96%B9%E6%B3%95"><span class="toc-text">常用的Math静态方法</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2"><span class="toc-text">类型转换</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%9E%9A%E4%B8%BE%E7%B1%BB%E5%9E%8B"><span class="toc-text">枚举类型</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2String%E7%B1%BB%E5%9E%8B"><span class="toc-text">字符串String类型</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E7%9A%84String-API"><span class="toc-text">常用的String API</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#StringBuilder%EF%BC%8CStringBuffer%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%9E%84%E9%80%A0"><span class="toc-text">StringBuilder，StringBuffer字符串构造</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%AF%BB%E5%8F%96%E8%BE%93%E5%85%A5"><span class="toc-text">读取输入</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%AD%97%E7%AC%A6%E6%96%87%E4%BB%B6%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA"><span class="toc-text">字符文件输入输出</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Java%E7%9A%84%E5%9D%97%E4%BD%9C%E7%94%A8%E5%9F%9F"><span class="toc-text">Java的块作用域</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#switch-case-break"><span class="toc-text">switch case break</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%95%B0%E7%BB%84"><span class="toc-text">数组</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B1%BB%E4%B8%8E%E5%AF%B9%E8%B1%A1"><span class="toc-text">类与对象</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%AF%B9%E8%B1%A1%E6%9E%84%E9%80%A0%E4%B8%8E%E6%9E%84%E9%80%A0%E5%87%BD%E6%95%B0"><span class="toc-text">对象构造与构造函数</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%AF%B9%E8%B1%A1%E5%9F%9F%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="toc-text">对象域的初始化</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%AF%B9%E8%B1%A1%E6%9E%90%E6%9E%84-finalize%E6%96%B9%E6%B3%95"><span class="toc-text">对象析构 finalize方法</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%96%B9%E6%B3%95%E5%8F%82%E6%95%B0%E4%BC%A0%E9%80%92"><span class="toc-text">方法参数传递</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E9%87%8D%E8%BD%BD"><span class="toc-text">重载</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%8C%85-package"><span class="toc-text">包 package</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%B1%BB%E8%B7%AF%E5%BE%84"><span class="toc-text">类路径</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%B1%BB%E6%B3%A8%E9%87%8A"><span class="toc-text">类注释</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li></ol>
+      
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
+    
+      <div class="comments-container">
+        
+
+
+
+
+  
+    <script async type="text/javascript" src="/plugins/valine.min.js" onload="loadValineSuc(this)"></script>
+  
+
+  <div id="vcomments"></div>
+
+  <script>
+    function loadValineSuc() {
+      new Valine({
+        el: '#vcomments',
+        appId: 'oOhVZyeGYClJeXi7hL6mMis8-gzGzoHsz',
+        appKey: 'T2sc39tWFmhYbQiem6rTdkkc',
+        placeholder: 'Welcome!',
+        avatar: 'retro',
+        lang: 'en'
+      })
+    }
+  </script>
+
+    <style>
+      .comments-container .v .vempty {
+        display: none!important;
+      }
+    </style>
+
+
+
+
+      </div>
+    
+  </div>
+
+
+        
+<div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          <a title="github" target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">
+            <i class="iconfont icon-github"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Copyright © 2023 Oranges</a>
+        
+    </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Theme by Oranges | Powered by Hexo</a>
+        
+    </div>
+  
+  
+</div>
+
+      </div>
+
+      <div class="tools-bar">
+        <div class="back-to-top tools-bar-item hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+        
+  <div class="search-icon tools-bar-item" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="搜索...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>First search, index file loading, please wait...<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>No result<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>The search.xml file was not found, please refer to：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>The request failed, Try to refresh the page or try again later.<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+        
+  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
+    <a href="javascript: void(0)">
+      <i id="theme-icon" class="iconfont icon-moon"></i>
+    </a>
+  </div>
+
+  
+<script src="/js/colorscheme.js"></script>
+
+
+
+
+
+        
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + %E5%A4%A7%E8%84%91Cache%E7%B3%BB%E5%88%97--Java%E5%BF%AB%E9%80%9F%E6%A2%B3%E7%90%86%EF%BC%8C%E6%96%B9%E4%BE%BF%E9%9A%8F%E6%97%B6load%E5%88%B0%E5%A4%A7%E8%84%91%EF%BC%8C%E5%87%8F%E5%B0%91%E4%BD%8E%E7%BA%A7bug%20(%E4%B8%80) + '&url=' + http%3A%2F%2Fexample.com%2F2022%2F01%2F02%2F%25E5%25A4%25A7%25E8%2584%2591Cache%25E7%25B3%25BB%25E5%2588%2597--Java%25E5%25BF%25AB%25E9%2580%259F%25E6%25A2%25B3%25E7%2590%2586%25EF%25BC%2588%25E4%25B8%2580%25EF%25BC%2589%2F + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=http://example.com/2022/01/02/%E5%A4%A7%E8%84%91Cache%E7%B3%BB%E5%88%97--Java%E5%BF%AB%E9%80%9F%E6%A2%B3%E7%90%86%EF%BC%88%E4%B8%80%EF%BC%89/" target="_blank" title="Facebook">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        
+      </div>
+    </div>
+  
+  
+<script src="/js/shares.js"></script>
+
+
+
+      </div>
+    </div>
+  </body>
+</html>
